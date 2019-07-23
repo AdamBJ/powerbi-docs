@@ -14,7 +14,7 @@ LocalizationGroup: Gateways
 
 # Prepare for Kerberos-based single sign-on (SSO) from Power BI service to on-premises data sources
 
-Several items must be configured for Kerberos Constrained Delegation to work properly, including _Service Principal Names_ (SPN) and delegation settings on service accounts.
+Several items must be configured for Kerberos constrained delegation to work properly, including _Service Principal Names_ (SPN) and delegation settings on service accounts.
 
 ### Prerequisite 1: Install and configure the Microsoft on-premises data gateway
 
@@ -57,7 +57,7 @@ First, determine whether an SPN was already created for the domain account used 
 
     ![Image of set SPN command](media/service-gateway-sso-kerberos/set-spn.png)
 
- With that step completed, we can move on to configuring delegation settings. Delegation settings can be configured for _either_ resource-based constrained Kerberos delegation or standard Kerberos constrained delegation. See the [constrained Kerberos delegation overview page](/windows-server/security/kerberos/kerberos-constrained-delegation-overview) for more information on the differences between the two approaches. Once you have decided which approach is most suitable, proceed to _either_ the [Configure standard Kerberos constrained delegation](#FIX ME) _or_ [Configure resource-based Kerberos constrained delegation](#FIXME) subsection. Do not complete both subsections.
+ With that step completed, we can move on to configuring delegation settings. Delegation settings can be configured for _either_ resource-based constrained Kerberos delegation or standard Kerberos constrained delegation. See the [constrained Kerberos delegation overview page](/windows-server/security/kerberos/kerberos-constrained-delegation-overview) for more information on the differences between the two approaches. Once you have decided which approach is most suitable, proceed to _either_ the [configure standard Kerberos constrained delegation](#FIX ME) _or_ [configure resource-based Kerberos constrained delegation](#FIX ME) subsection. Do not complete both subsections.
 
 ### Configure the gateway service account for standard Kerberos constrained delegation
 
@@ -138,7 +138,7 @@ Given those example names and settings, use the following configuration steps:
 
 ### Grant the gateway service account local policy rights on the gateway machine
 
-Finally, on the machine running the gateway service (**PBIEgwTestGW** in our example), you must grant the gateway service account the local policy **Impersonate a client after authentication** and **Act as part of the operating system (SeTcbPrivilege)**. You can perform and verify this configuration with the Local Group Policy Editor (**gpedit**).
+On the machine running the gateway service (**PBIEgwTestGW** in our example), you must grant the gateway service account the local policy **Impersonate a client after authentication** and **Act as part of the operating system (SeTcbPrivilege)**. You can perform and verify this configuration with the Local Group Policy Editor (**gpedit**).
 
 1. On the gateway machine, run: *gpedit.msc*.
 
