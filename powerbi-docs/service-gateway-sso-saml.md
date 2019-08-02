@@ -22,7 +22,7 @@ We currently support SAP HANA with SAML. For more information about setting up a
 
 We support additional data sources with [Kerberos](service-gateway-sso-kerberos.md).
 
-Note that for HANA it is **highly** recommended that encryption be enabled before establishing a SAML SSO connection (that is, you should configure the HANA server to accept encrypted connections and also configure the gateway to use encryption when communicating with your HANA server). The HANA ODBC driver is **not** able to encrypt SAML assertions by default, and without encryption turned on the signed SAML assertion will be sent from the Gateway to the HANA server "in the clear" and be vulnerable to interception and reuse by third parties.
+Note that for HANA it is **highly** recommended that encryption be enabled before establishing a SAML SSO connection (that is, you should configure the HANA server to accept encrypted connections and also configure the gateway to use encryption when communicating with your HANA server). The HANA ODBC driver is **not** able to encrypt SAML assertions by default, and without encryption turned on the signed SAML assertion will be sent from the Gateway to the HANA server "in the clear" and be vulnerable to interception and reuse by third parties. TODO: INSERT LINK TO HOW TO ENCRYPT DOCUMENT.
 
 ## Configuring the gateway and data source
 
