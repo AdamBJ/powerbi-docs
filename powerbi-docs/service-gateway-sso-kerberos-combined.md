@@ -15,7 +15,7 @@ Use [Kerberos constrained delegation](/windows-server/security/kerberos/kerberos
 
 # Prepare for Kerberos-based single sign-on (SSO) from Power BI service to on-premises data sources
 
-Several items must be configured for Kerberos constrained celegation to work properly, including _Service Principal Names_ (SPN) and delegation settings on service accounts.
+Several items must be configured for Kerberos constrained delegation to work properly, including _Service Principal Names_ (SPN) and delegation settings on service accounts.
 
 ### Prerequisite 1: Install and configure the Microsoft on-premises data gateway
 
