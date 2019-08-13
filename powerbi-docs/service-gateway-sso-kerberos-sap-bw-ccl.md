@@ -1,6 +1,6 @@
 ---
-title: Use Kerberos for single sign-on (SSO) to SAP BW using CommonCryptoLib (sapcrypto)
-description: Configure your SAP BW server to enable SSO from Power BI service using CommonCryptoLib (sapcrypto)
+title: Use Kerberos for single sign-on (SSO) to SAP BW using CommonCryptoLib (sapcrypto.dll)
+description: Configure your SAP BW server to enable SSO from Power BI service using CommonCryptoLib (sapcrypto.dll)
 author: mgblythe
 ms.author: mblythe
 manager: kfile
@@ -11,6 +11,8 @@ ms.topic: conceptual
 ms.date: 08/01/2019
 LocalizationGroup: Gateways
 ---
+> [!NOTE]
+> Complete the steps on this page in addition to the steps in [Prepare for single sign-on (SSO) - Kerberos](TODO link) before attempting to refresh a SAP BW-based report that uses Kerberos SSO.
 
 ## Configure SAP BW for SSO using CommonCryptoLib
 
@@ -20,8 +22,6 @@ Now that you have completed the configuration steps in [prepare for Kerberos con
 > These instructions cover SSO setup for SAP BW **Application** Servers. Microsoft does not currently support SSO connections to SAP BW **Message** Servers.
 
 1. Ensure that your BW server is correctly configured for Kerberos SSO. If it is, you should be able to use SSO to access your BW server with an SAP tool like SAP GUI. For more information on setup steps, see [SAP Single Sign-On: Authenticate with Kerberos/SPNEGO](https://blogs.sap.com/2017/07/27/sap-single-sign-on-authenticate-with-kerberosspnego/). Your BW server should be using CommonCryptoLib as its SNC Library and have an SNC name that starts with "CN=", such as "CN=BW1". For more information on SNC name requirements, see [SNC Parameters for Kerberos Configuration](https://help.sap.com/viewer/df185fd53bb645b1bd99284ee4e4a750/3.0/en-US/360534094511490d91b9589d20abb49a.html) (the snc/identity/as parameter).
-
-1. If you haven't already done so, complete the steps under [Prepare for Kerberos constrained delegation](https://docs.microsoft.com/power-bi/service-gateway-sso-kerberos#prepare-for-kerberos-constrained-delegation). Choose resource-based delegation if your SAP BW server and your gateway instance exist in different domains. Ensure that your gateway Service User is configured to present delegated credentials to the Service User that represents your BW Application Server in your Active Directory environment.
 
 1. If you haven't already done so, install the x64-version of the [SAP .NET Connector](https://support.sap.com/en/product/connectors/msnet.html) on the computer the gateway has been installed on. You can check whether the component has been installed by attempting to connect to your BW server in  Power BI Desktop. If you can't connect using the 2.0 implementation, the .NET Connector isn't installed.
 
@@ -42,15 +42,15 @@ Now that you have completed the configuration steps in [prepare for Kerberos con
     > [!NOTE]
     > These files must be stored in the same location; in other words, _/path/to/sapcrypto/_ should contain both sapcrypto.ini and sapcrypto.dll.
 
-    Both the gateway Service User and the Active Directory (AD) user that the Service User will impersonate need read and execute permissions for both files. We recommend granting permissions on both the .ini and .dll files to the Authenticated Users group. For testing purposes, you can also explicitly grant these permissions to both the gateway Service User and the impersonated user. In the screenshot below we've granted the Authenticated Users group **Read &amp; execute** permissions for sapcrypto.dll:
+    Both the gateway Service User and the Active Directory (AD) user that the Service User will impersonate need read and execute permissions for both files. We recommend granting permissions on both the .ini and .dll files to the Authenticated Users group. For testing purposes, you can also explicitly grant these permissions to both the gateway Service User and the Active Directory user you'll use for testing. In the screenshot below we've granted the Authenticated Users group **Read &amp; execute** permissions for sapcrypto.dll:
 
     ![Authenticated users](media/service-gateway-sso-kerberos/authenticated-users.png)
 
 1. If you don't have an SAP Business Warehouse Server data source, on the **Manage gateways** page in the Power BI service, add a data source. If you already have a BW data source associated with the gateway you want the SSO connection to flow through, prepare to edit it.
 
-    For **SNC Library** , select either **SNC\_LIB or SNC\_LIB\_64 environmental variable** or **Custom**. If you select the **SNC\_LIB** option, you must set the value of the SNC\_LIB\_64 environment variable on the gateway machine to the absolute path of the copy of sapcrypto.dll on the gateway machine, such as C:\Users\Test\Desktop\sapcrypto.dll. If you choose **Custom** , paste the absolute path to the sapcrypto .dll into the Custom SNC Library Path field that appears on the **Manage gateways** page.
+    For **SNC Library** , select either **SNC\_LIB or SNC\_LIB\_64 environmental variable** or **Custom**. If you select the **SNC\_LIB** option, you must set the value of the SNC\_LIB\_64 environment variable on the gateway machine to the absolute path of the copy of sapcrypto.dll on the gateway machine, e.g. C:\Users\Test\Desktop\sapcrypto.dll. If you choose **Custom** , paste the absolute path to the sapcrypto .dll into the Custom SNC Library Path field that appears on the **Manage gateways** page.
 
-    Under **Advanced settings** , make sure the **Use SSO via Kerberos for DirectQuery queries** checkbox is selected. The username you enter only needs to have permission to connect to the BW server and is used primarily to test the data source connection after you've created it. The user is also used to refresh reports created from import-based datasets if you have any. If you select **Basic** authentication, you must provide a BW user. If you select **Windows** authentication, you must specify a Windows Active Directory user that's  mapped to a BW user through the SU01 transaction in SAP GUI. The rest of the fields (**System Number **,** Client ID **,** SNC Partner Name**, and so on) must match the information you would enter into Power BI Desktop to connect to your BW server through SSO. Select **Apply** and make sure the test connection is successful.
+    Under **Advanced settings** , make sure the **Use SSO via Kerberos for DirectQuery queries** checkbox is selected. The username you enter only needs to have permission to connect to the BW server and is used primarily to test the data source connection after you've created it. The user is also used to refresh reports created from import-based datasets if you have any. If you select **Basic** authentication, you must provide credentials for a BW user. If you select **Windows** authentication, you must specify a Windows Active Directory user that's mapped to a BW user through the SU01 transaction in SAP GUI. The rest of the fields (**System Number **,** Client ID **,** SNC Partner Name**, and so on) must match the information you would enter into Power BI Desktop to connect to your BW server through Kerberos SSO. Select **Apply** and make sure the test connection is successful.
 
     ![Authentication method](media/service-gateway-sso-kerberos/authentication-method.png)
 
@@ -68,13 +68,13 @@ Now that you have completed the configuration steps in [prepare for Kerberos con
 
 ### Troubleshooting
 
-If you're unable to refresh the report in the Power BI service, you can use gateway tracing, CPIC tracing, and CommonCryptoLib tracing to help diagnose the issue. CPIC tracing and CommonCryptoLib are SAP products, so Microsoft can't provide any direct support for them. For Active Directory users that will be granted SSO access to BW, some Active Directory configurations might require the users to be members of the Administrators group on the machine where the gateway is installed.
+If you're unable to refresh the report in the Power BI service, you can use gateway tracing, CPIC tracing, and CommonCryptoLib tracing to help diagnose the issue. CPIC tracing and CommonCryptoLib are SAP products, so Microsoft can't provide any direct support for them. For Active Directory users that will be granted SSO access to BW, some Active Directory configurations may require the users to be members of the Administrators group on the machine where the gateway is installed.
 
 1. **Gateway logs:** Simply reproduce the issue, open the [gateway app](https://docs.microsoft.com/data-integration/gateway/service-gateway-app), go to the **Diagnostics** tab, and select **Export logs** :
 
     ![Export gateway logs](media/service-gateway-sso-kerberos/export-gateway-logs.png)
 
-1. **CPIC Tracing:** To enable CPIC tracing, set two environment variables: CPIC\_TRACE and CPIC\_TRACE\_DIR. The first variable sets the trace level, and the second variable sets the trace file directory. The directory must be a location that  members of the Authenticated Users group can write to. Set CPIC\_TRACE to 3 and CPIC\_TRACE\_DIR to whichever directory you want to trace files written to.
+1. **CPIC Tracing:** To enable CPIC tracing, set two environment variables: CPIC\_TRACE and CPIC\_TRACE\_DIR. The first variable sets the trace level, and the second variable sets the trace file directory. The directory must be a location that  members of the Authenticated Users group can write to. Set CPIC\_TRACE to 3 and CPIC\_TRACE\_DIR to whichever directory you want the trace files written to.
 
     ![CPIC tracing](media/service-gateway-sso-kerberos/cpic-tracing.png)
 
@@ -87,7 +87,7 @@ If you're unable to refresh the report in the Power BI service, you can use gate
     ccl/trace/directory=\\<drive\\>:\logs\sectrace
     ```
 
-    Make sure to change the _ccl/trace/directory_ option to a location members of the Authenticated Users group can write to. Alternatively, create a new .ini file to change this behavior. In the same directory as sapcrypto.ini and sapcrypto.dll, create a file named sectrace.ini, with the following content.  Replace the DIRECTORY option with a location on your machine that Authenticated User can write to:
+    Make sure to change the _ccl/trace/directory_ option to a location members of the Authenticated Users group can write to. Alternatively, create a new .ini file to change this behavior. In the same directory as sapcrypto.ini and sapcrypto.dll, create a file named sectrace.ini, with the content below. Replace the DIRECTORY option with a location on your machine that Authenticated User can write to:
 
     ```
     LEVEL = 5
@@ -98,7 +98,6 @@ If you're unable to refresh the report in the Power BI service, you can use gate
     Now, reproduce the issue and check that the location pointed to by DIRECTORY contains trace files. Make sure to turn off CPIC and CCL tracing when you are finished.
 
     For more information on CommonCryptoLib tracing, see [SAP Note 2491573](https://launchpad.support.sap.com/#/notes/2491573) (s-user required).
-
 
 ## Next steps
 
